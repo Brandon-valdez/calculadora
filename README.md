@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Instalación de Python
 ``https://www.python.org/downloads/``
 
@@ -30,3 +31,6 @@ c:\dev\py\
 ├── main.py            # Archivo principal del proyecto
 └── tests\             # Carpeta con pruebas unitarias
 ```
+=======
+# calculadora
+>>>>>>> fb828fc3f27637d21f3416a2f56e10a47880b278
