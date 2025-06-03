@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculadora de Límites Avanzada</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                50: '#f0f9ff',
+                100: '#e0f2fe',
+                500: '#3b82f6',
+                600: '#2563eb',
+                700: '#1d4ed8',
+              },
+              secondary: {
+                500: '#6b7280',
+                600: '#4b5563',
+              },
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="bg-gray-50 min-h-screen p-4 md:p-6 font-sans">
+    <div
+      class="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden"
+    >
+      <!-- Header -->
+      <div
+        class="bg-gradient-to-r from-primary-600 to-primary-700 p-6 text-white"
+      >
+        <h1 class="text-2xl md:text-3xl font-bold">
+          <i class="fas fa-calculator mr-2"></i> Calculadora de Límites Avanzada
+        </h1>
+        <p class="mt-2 opacity-90">
+          Calcula límites y analiza discontinuidades de funciones matemáticas
+        </p>
+      </div>
+
+      <!-- Main Content -->
+      <div class="p-6 md:p-8">
+        <!-- Vista previa LaTeX -->
+        <div class="mb-8">
+          <label
+            for="funcion"
+            class="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Ingresa tu función
+          </label>
+          <textarea
+            id="funcion"
+            rows="3"
+            class="w-full p-4 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition duration-200"
+            placeholder="Ejemplo: (sqrt(1 + x^2) - 1) / x^2"
+          ></textarea>
+          <div class="flex items-center justify-between mt-1">
+            <span class="text-xs text-gray-500"
+              >Usa sintaxis matemática (sqrt, ^, /, etc.)</span
+            >
+          </div>
+          <div
+            id="preview"
+            class="mt-4 p-4 border-2 border-dashed border-gray-200 rounded-lg min-h-[3rem] bg-gray-50 flex items-center justify-center text-gray-600"
+          ></div>
+        </div>
+
+        <!-- Entradas de usuario -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div>
+            <label
+              for="variable"
+              class="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Variable
+            </label>
+            <input
+              type="text"
+              id="variable"
+              value="x"
+              maxlength="1"
+              pattern="[a-zA-Z]"
+              title="La variable debe ser un solo carácter alfabético"
+              class="w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label
+              for="punto"
+              class="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Punto a evaluar
+            </label>
+            <input
+              type="text"
+              id="punto"
+              placeholder="0"
+              class="w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            />
+            <span class="text-xs text-gray-500 mt-1 block"
+              >Puede ser número, oo (infinito) o -oo</span
+            >
+          </div>
+        </div>
+
+        <!-- Teclado matemático -->
+        <div class="mb-8">
+          <h3 class="text-sm font-medium text-gray-700 mb-3">
+            Teclado matemático
+          </h3>
+          <div class="grid grid-cols-5 gap-2">
+            <!-- Operadores básicos -->
+            <button
+              onclick="addOperator('^')"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              x<sup>y</sup>
+            </button>
+            <button
+              onclick="addSqrt()"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              √x
+            </button>
+            <button
+              onclick="addFraction()"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              a/b
+            </button>
+            <button
+              onclick="addOperator('()')"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              ( )
+            </button>
+            <button
+              onclick="addOperator('pi')"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              π
+            </button>
+            <!-- Operadores avanzados -->
+            <button
+              onclick="addOperator('sin')"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              sin
+            </button>
+            <button
+              onclick="addOperator('cos')"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              cos
+            </button>
+            <button
+              onclick="addOperator('tan')"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              tan
+            </button>
+            <button
+              onclick="addOperator('log')"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              log
+            </button>
+            <button
+              onclick="addOperator('exp')"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              e^x
+            </button>
+            <!-- Números -->
+            <button
+              onclick="addNumber('1')"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              1
+            </button>
+            <button
+              onclick="addNumber('2')"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              2
+            </button>
+            <button
+              onclick="addNumber('3')"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              3
+            </button>
+            <button
+              onclick="addOperator('+')"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              +
+            </button>
+            <button
+              onclick="addOperator('-')"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              -
+            </button>
+            <button
+              onclick="addNumber('4')"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              4
+            </button>
+            <button
+              onclick="addNumber('5')"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              5
+            </button>
+            <button
+              onclick="addNumber('6')"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              6
+            </button>
+            <button
+              onclick="addOperator('*')"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              ×
+            </button>
+            <button
+              onclick="addOperator('/')"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              ÷
+            </button>
+            <button
+              onclick="addNumber('7')"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              7
+            </button>
+            <button
+              onclick="addNumber('8')"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              8
+            </button>
+            <button
+              onclick="addNumber('9')"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              9
+            </button>
+            <button
+              onclick="addOperator('infty')"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              ∞
+            </button>
+            <button
+              onclick="addOperator('abs')"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              |x|
+            </button>
+            <button
+              onclick="addNumber('0')"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              0
+            </button>
+            <button
+              onclick="addNumber('.')"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              .
+            </button>
+            <button
+              onclick="addOperator('(')"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              (
+            </button>
+            <button
+              onclick="addOperator(')')"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              )
+            </button>
+            <button
+              onclick="addOperator(',')"
+              class="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200"
+            >
+              ,
+            </button>
+          </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="flex flex-col sm:flex-row gap-4">
+          <button
+            onclick="calcularLimite()"
+            class="flex-1 p-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition duration-200 shadow-md hover:shadow-lg"
+          >
+            <i class="fas fa-calculator mr-2"></i> Calcular Límite
+          </button>
+          <button
+            onclick="limpiar()"
+            class="flex-1 p-3 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition duration-200"
+          >
+            <i class="fas fa-broom mr-2"></i> Limpiar
+          </button>
+        </div>
+
+        <!-- Resultados -->
+        <div
+          id="resultado"
+          class="mt-8 p-6 bg-gray-50 rounded-xl border border-gray-200 space-y-4 hidden"
+        >
+          <h3 class="text-xl font-bold text-primary-600 border-b pb-2">
+            Resultados del Análisis
+          </h3>
+          <!-- Los resultados se insertarán aquí dinámicamente -->
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="bg-gray-100 px-6 py-4 text-center text-sm text-gray-600">
+        Calculadora de Límites &copy; 2023 - Herramienta educativa para análisis
+        matemático
+      </div>
+    </div>
+
+    <!-- Font Awesome para íconos -->
+    <script
+      src="https://kit.fontawesome.com/a076d05399.js"
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      const textarea = document.getElementById('funcion');
+      const preview = document.getElementById('preview');
+
+      // Función para agregar fracción con sintaxis correcta
+      function addFraction() {
+        const snippet = '()/()';
+        insertAtCursor(snippet, 1); // Coloca el cursor dentro del primer paréntesis
+      }
+
+      // Función para agregar raíz cuadrada
+      function addSqrt() {
+        const snippet = 'sqrt()';
+        insertAtCursor(snippet, 5); // Coloca el cursor dentro del paréntesis
+      }
+
+      // Función para agregar exponente
+      function addExponent() {
+        const snippet = '**';
+        insertAtCursor(snippet, 2); // Coloca el cursor después del **
+      }
+
+      // Modificar la función toLatex para mejor conversión
+      function toLatex(raw) {
+        let tex = raw;
+
+        // Convertir exponentes
+        tex = tex.replace(/\*\*/g, '^');
+
+        // Convertir sqrt
+        tex = tex.replace(/sqrt\(([^)]+)\)/g, '\\sqrt{$1}');
+
+        // Convertir fracciones
+        tex = tex.replace(/\(([^)]+)\)\s*\/\s*\(([^)]+)\)/g, '\\frac{$1}{$2}');
+        tex = tex.replace(/\(([^)]+)\)\s*\/\s*([^\/\s]+)/g, '\\frac{$1}{$2}');
+        tex = tex.replace(/([^\/\s]+)\s*\/\s*\(([^)]+)\)/g, '\\frac{$1}{$2}');
+        tex = tex.replace(/([^\/\s]+)\s*\/\s*([^\/\s]+)/g, '\\frac{$1}{$2}');
+
+        return tex;
+      }
+
+      // Convierte JS-style a LaTeX para el preview, soportando ** y agrupando correctamente exponentes antes de fracciones
+      function toLatex(raw) {
+        let tex = raw;
+        // 1. Exponentes: x**y -> x^y
+        tex = tex.replace(/\*\*/g, '^');
+        // 2. Agrupa exponentes: ^y -> ^{y}
+        tex = tex.replace(/\^([^\{\s]+)/g, '^{\$1}');
+        // 3. Raíz cuadrada: sqrt(expr) -> \sqrt{expr}
+        tex = tex.replace(/sqrt\(([^)]+)\)/g, '\\sqrt{$1}');
+        // 4. Fracción con paréntesis en ambos lados: (a)/(b) -> \frac{a}{b}
+        tex = tex.replace(
+          /\(([^()]+)\)\s*\/\s*\(([^()]+)\)/g,
+          '\\frac{$1}{$2}'
+        );
+        // 5. Fracción con paréntesis solo en numerador: (a)/b -> \frac{a}{b}
+        tex = tex.replace(
+          /\(([^()]+)\)\s*\/\s*([A-Za-z0-9\\\^\{\}]+)/g,
+          '\\frac{$1}{$2}'
+        );
+        return tex;
+      }
+
+      function renderPreview() {
+        const raw = textarea.value.trim();
+        preview.innerHTML = '';
+        if (!raw) return;
+        const tex = toLatex(raw);
+        try {
+          katex.render(tex, preview, {
+            throwOnError: false,
+            displayMode: true,
+          });
+        } catch (e) {
+          preview.textContent = 'Error de sintaxis en LaTeX';
+        }
+      }
+
+      function updatePreview() {
+        renderPreview();
+      }
+
+      // Eventos para actualización dinámica
+      textarea.addEventListener('input', updatePreview);
+      textarea.addEventListener('keyup', updatePreview);
+      textarea.addEventListener('click', updatePreview);
+      textarea.addEventListener('select', updatePreview);
+
+      function insertAtCursor(text, cursorOffset = null) {
+        const textarea = document.getElementById('funcion');
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const before = textarea.value.slice(0, start);
+        const after = textarea.value.slice(end);
+
+        textarea.value = before + text + after;
+
+        // Si no se especifica offset, coloca el cursor al final del texto insertado
+        const pos =
+          cursorOffset !== null ? start + cursorOffset : start + text.length;
+        textarea.selectionStart = textarea.selectionEnd = pos;
+
+        textarea.focus();
+        updatePreview();
+      }
+
+      function addNumber(num) {
+        insertAtCursor(num);
+      }
+
+      function addOperator(type) {
+        let snippet = type;
+        let cursorOffset = snippet.length;
+        switch (type) {
+          case 'sqrt':
+            snippet = 'sqrt()';
+            cursorOffset = 5;
+            break;
+          case 'frac':
+            snippet = 'frac{}{}';
+            cursorOffset = 5;
+            break;
+          case '^':
+            snippet = '^{}';
+            cursorOffset = 2;
+            break;
+          case '()':
+            snippet = '()';
+            cursorOffset = 1;
+            break;
+          case 'div':
+            snippet = ' / ';
+            cursorOffset = 3;
+            break;
+          case 'mult':
+            snippet = ' * ';
+            cursorOffset = 3;
+            break;
+          case 'pi':
+            snippet = 'pi';
+            break;
+          case 'infty':
+            snippet = 'infty';
+            break;
+          case 'abs':
+            snippet = '| |';
+            cursorOffset = 2;
+            break;
+          default:
+            break;
+        }
+        insertAtCursor(snippet, cursorOffset);
+      }
+
+      function limpiar() {
+        textarea.value = '';
+        document.getElementById('variable').value = 'x';
+        document.getElementById('punto').value = '';
+        preview.innerHTML = '';
+        document.getElementById('resultado').innerHTML = '';
+        document.getElementById('resultado').classList.add('hidden');
+      }
+      // Inicializar preview
+      updatePreview();
+
+      function renderLatex(element) {
+        const texElements = element.querySelectorAll('.latex');
+        texElements.forEach((el) => {
+          try {
+            katex.render(el.textContent, el, {
+              throwOnError: false,
+              displayMode: el.classList.contains('block'),
+            });
+          } catch (e) {
+            console.error(e);
+          }
+        });
+      }
+
+      function calcularLimite() {
+        const funcion = document.getElementById('funcion').value.trim();
+        const variable = document.getElementById('variable').value.trim();
+        const punto = document.getElementById('punto').value.trim();
+        const resultadoDiv = document.getElementById('resultado');
+
+        // Limpiar resultados previos
+        resultadoDiv.innerHTML = '';
+
+        if (!funcion || !variable || punto === '') {
+          resultadoDiv.innerHTML =
+            '<p class="text-red-600">Por favor, completa todos los campos.</p>';
+          return;
+        }
+
+        // Crear el cuerpo de la solicitud
+        const data = {
+          funcion: funcion,
+          variable: variable,
+          punto: punto,
+        };
+
+        // Enviar datos al backend
+        fetch('/calcular', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.error) {
+              resultadoDiv.innerHTML = `<p class="text-red-600">Error: ${data.error}</p>`;
+            } else {
+              // Mostrar resultados
+              mostrarResultado(data);
+            }
+          })
+          .catch((error) => {
+            resultadoDiv.innerHTML = `<p class="text-red-600">Error al conectar con el servidor: ${error.message}</p>`;
+          });
+      }
+    </script>
+    <script src="/static/main.js"></script>
+  </body>
+</html>

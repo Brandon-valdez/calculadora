@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculadora de Límites Avanzada</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    />
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
+    ></script>
+  </head>
+  <body class="bg-gray-100 min-h-screen p-4">
+    <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-6">
+      <h1 class="text-2xl font-bold mb-4 text-blue-600">
+        Calculadora de Límites
+      </h1>
+
+      <!-- Vista previa LaTeX -->
+      <div class="mb-6">
+        <label
+          for="funcion"
+          class="block text-sm font-medium text-gray-700 mb-2"
+          >Función</label
+        >
+        <textarea
+          id="funcion"
+          rows="3"
+          class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+          placeholder="e.g. \sqrt{x-4} - \frac{3x-14}{x-5}"
+        ></textarea>
+        <div
+          id="preview"
+          class="mt-4 p-4 border rounded-lg min-h-[3rem] bg-gray-50 flex items-center justify-center text-gray-600"
+        ></div>
+      </div>
+
+      <!-- Entradas de usuario -->
+      <div class="mb-4 space-y-2">
+        <div class="flex gap-4 mb-8">
+          <div class="flex-1">
+            <label
+              for="variable"
+              class="block text-sm font-medium text-gray-700 mb-1"
+              >Variable</label
+            >
+            <input
+              type="text"
+              id="variable"
+              value="x"
+              class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
+          <div class="flex-1">
+            <label
+              for="punto"
+              class="block text-sm font-medium text-gray-700 mb-1"
+              >Punto</label
+            >
+            <input
+              type="text"
+              id="punto"
+              placeholder="0"
+              class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Teclado matemático completo -->
+      <div class="grid grid-cols-8 gap-1 mb-4">
+        <!-- Fila 1: Operadores avanzados -->
+        <button
+          onclick="addOperator('sqrt')"
+          class="p-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          √ⁿ
+        </button>
+        <button
+          onclick="addOperator('^')"
+          class="p-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          x^y
+        </button>
+        <button
+          onclick="addOperator('frac')"
+          class="p-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          a/b
+        </button>
+        <button
+          onclick="addOperator('()')"
+          class="p-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          ( )
+        </button>
+        <button
+          onclick="addOperator('lim')"
+          class="p-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          lim
+        </button>
+        <button
+          onclick="addOperator('sin')"
+          class="p-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          sin
+        </button>
+        <button
+          onclick="addOperator('cos')"
+          class="p-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          cos
+        </button>
+        <button
+          onclick="addOperator('log')"
+          class="p-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          log
+        </button>
+
+        <!-- Fila 2: Números -->
+        <button
+          onclick="addNumber('7')"
+          class="p-2 bg-gray-100 rounded hover:bg-gray-200"
+        >
+          7
+        </button>
+        <button
+          onclick="addNumber('8')"
+          class="p-2 bg-gray-100 rounded hover:bg-gray-200"
+        >
+          8
+        </button>
+        <button
+          onclick="addNumber('9')"
+          class="p-2 bg-gray-100 rounded hover:bg-gray-200"
+        >
+          9
+        </button>
+        <button
+          onclick="addOperator('div')"
+          class="p-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          ÷
+        </button>
+        <button
+          onclick="addOperator('pi')"
+          class="p-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          π
+        </button>
+        <button
+          onclick="addOperator('e')"
+          class="p-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          e
+        </button>
+        <button
+          onclick="addOperator('infty')"
+          class="p-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          ∞
+        </button>
+        <button
+          onclick="addOperator('abs')"
+          class="p-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          |x|
+        </button>
+
+        <!-- Fila 3: Números -->
+        <button
+          onclick="addNumber('4')"
+          class="p-2 bg-gray-100 rounded hover:bg-gray-200"
+        >
+          4
+        </button>
+        <button
+          onclick="addNumber('5')"
+          class="p-2 bg-gray-100 rounded hover:bg-gray-200"
+        >
+          5
+        </button>
+        <button
+          onclick="addNumber('6')"
+          class="p-2 bg-gray-100 rounded hover:bg-gray-200"
+        >
+          6
+        </button>
+        <button
+          onclick="addOperator('mult')"
+          class="p-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          ×
+        </button>
+        <button
+          onclick="addOperator('ln')"
+          class="p-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          ln
+        </button>
+        <button
+          onclick="addOperator('sum')"
+          class="p-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          ∑
+        </button>
+        <button
+          onclick="addOperator('int')"
+          class="p-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          ∫
+        </button>
+        <button
+          onclick="addOperator('cdot')"
+          class="p-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          ·
+        </button>
+
+        <!-- Fila 4: Números -->
+        <button
+          onclick="addNumber('1')"
+          class="p-2 bg-gray-100 rounded hover:bg-gray-200"
+        >
+          1
+        </button>
+        <button
+          onclick="addNumber('2')"
+          class="p-2 bg-gray-100 rounded hover:bg-gray-200"
+        >
+          2
+        </button>
+        <button
+          onclick="addNumber('3')"
+          class="p-2 bg-gray-100 rounded hover:bg-gray-200"
+        >
+          3
+        </button>
+        <button
+          onclick="addOperator('minus')"
+          class="p-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          −
+        </button>
+        <button
+          onclick="addOperator('tan')"
+          class="p-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          tan
+        </button>
+        <button
+          onclick="addOperator('rightarrow')"
+          class="p-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          →
+        </button>
+        <button
+          onclick="addOperator('pm')"
+          class="p-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          ±
+        </button>
+        <button
+          onclick="addOperator('prime')"
+          class="p-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          '
+        </button>
+
+        <!-- Fila 5: Números y operadores finales -->
+        <button
+          onclick="addNumber('0')"
+          class="p-2 bg-gray-100 rounded hover:bg-gray-200"
+        >
+          0
+        </button>
+        <button
+          onclick="addNumber('.')"
+          class="p-2 bg-gray-100 rounded hover:bg-gray-200"
+        >
+          .
+        </button>
+        <button
+          onclick="addOperator('eq')"
+          class="p-2 bg-gray-100 rounded hover:bg-gray-200"
+        >
+          =
+        </button>
+        <button
+          onclick="addOperator('plus')"
+          class="p-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          +
+        </button>
+        <button
+          onclick="addOperator('exp')"
+          class="p-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          e^x
+        </button>
+        <button
+          onclick="addOperator('!')"
+          class="p-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          !
+        </button>
+        <button
+          onclick="addOperator('theta')"
+          class="p-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          θ
+        </button>
+        <button
+          onclick="addOperator('partial')"
+          class="p-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          ∂
+        </button>
+      </div>
+
+      <!-- Botones de acción -->
+      <div class="flex gap-2">
+        <button
+          onclick="calcularLimite()"
+          class="flex-1 p-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        >
+          Calcular
+        </button>
+        <button
+          onclick="limpiar()"
+          class="flex-1 p-2 bg-red-600 text-white rounded hover:bg-red-700"
+        >
+          Limpiar
+        </button>
+      </div>
+
+      <!-- Resultados -->
+      <div id="resultado" class="mt-4 p-4 bg-gray-50 rounded space-y-2"></div>
+    </div>
+
+    <script>
+      // Coge referencias
+      const textarea = document.getElementById('funcion');
+      const preview = document.getElementById('preview');
+
+      // Cada vez que cambie el contenido o muevas el cursor, actualiza preview
+      textarea.addEventListener('input', updatePreview);
+      textarea.addEventListener('click', updatePreview);
+
+      let currentRootIndex = null;
+
+      function addNumber(num) {
+        const input = document.getElementById('funcion');
+        input.value += num;
+        updatePreview();
+      }
+
+      function addOperator(type) {
+        const input = document.getElementById('funcion');
+        switch (type) {
+          case 'sqrt':
+            input.value += 'sqrt()';
+            currentRootIndex = input.value.length - 1;
+            break;
+          case 'frac':
+            input.value += 'frac{}{}';
+            break;
+          case '^':
+            input.value += '^{}';
+            break;
+          case 'div':
+            input.value += ' \\div ';
+            break;
+          case 'mult':
+            input.value += ' \\times ';
+            break;
+          case 'pi':
+            input.value += '\\pi';
+            break;
+          case 'infty':
+            input.value += '\\infty';
+            break;
+          // ... otros operadores ...
+        }
+        updatePreview();
+      }
+
+      function updatePreview() {
+        const tex = textarea.value.trim();
+        // Limpia preview
+        preview.innerHTML = '';
+        if (!tex) return;
+
+        try {
+          // Renderiza con KaTeX en display mode
+          katex.render(tex, preview, {
+            throwOnError: false,
+            displayMode: true,
+          });
+        } catch (e) {
+          preview.textContent = 'Error de sintaxis en LaTeX';
+        }
+      }
+
+      function renderLatex(element) {
+        const texElements = element.querySelectorAll('.latex');
+        texElements.forEach((el) => {
+          try {
+            katex.render(el.textContent, el, {
+              throwOnError: false,
+              displayMode: el.classList.contains('block'),
+            });
+          } catch (e) {
+            console.error(e);
+          }
+        });
+      }
+      // Llama inicialmente para mostrar placeholder o vacío
+      updatePreview();
+    </script>
+    <script src="/static/main.js"></script>
+  </body>
+</html>
